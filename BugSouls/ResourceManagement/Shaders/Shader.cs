@@ -22,8 +22,21 @@ namespace BugSouls.ResourceManagement.Shaders
             get => loaded;
         }
 
+        public ShaderUniform this[string name]
+        {
+            get
+            {
+                if (shaderUniforms.ContainsKey(name))
+                    return shaderUniforms[name];
+                else
+                    return null;
+            }
+        }
+
         private string path;
         private bool loaded;
+
+        private Dictionary<string, ShaderUniform> shaderUniforms;
 
         private StringBuilder vertexShaderSource;        
         private StringBuilder fragmentShaderSource;
@@ -33,6 +46,7 @@ namespace BugSouls.ResourceManagement.Shaders
         {
             this.path = path;
             program = -1;
+            shaderUniforms = new Dictionary<string, ShaderUniform>();
             loaded = Load();
         }
 
@@ -111,6 +125,7 @@ namespace BugSouls.ResourceManagement.Shaders
                 GL.DeleteShader(fragmentShader);
 
                 Console.WriteLine($"Succesfully loaded shader {path}!");
+                InitShaderUniforms();
                 return true;
             }
             return false;
@@ -143,6 +158,7 @@ namespace BugSouls.ResourceManagement.Shaders
                 }
             }
         }
+
         private bool CreateShader(out int shaderId, string shaderSource, ShaderType shaderType)
         {
             int shaderIdTemp = GL.CreateShader(shaderType);
@@ -171,6 +187,19 @@ namespace BugSouls.ResourceManagement.Shaders
 
             shaderId = shaderIdTemp;
             return true;
+        }
+
+        private void InitShaderUniforms()
+        {
+            //get all shaderuniforms
+            int numOfUniforms;
+            GL.GetProgram(program, GetProgramParameterName.ActiveUniforms, out numOfUniforms);
+            //loop through
+            for (int i = 0; i < numOfUniforms; i++)
+            {
+                ShaderUniform su = new ShaderUniform(program, i, this);
+                shaderUniforms.Add(su.Name, su);
+            }
         }
     }
 }

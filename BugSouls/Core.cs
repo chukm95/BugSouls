@@ -67,10 +67,19 @@ namespace BugSouls
             Initialize();
             while(isRunning)
             {
+                //count the deltatime
                 deltaTime = deltaTimer.Elapsed;
                 deltaTimer.Restart();
-                Update();
-                Render();
+                //process window events
+                nativeWindow.ProcessEvents();
+                //update the currentgamestate
+                gameStateManager.CurrentGameState?.Update(deltaTime);
+                //render the game
+                gameStateManager.CurrentGameState?.RenderGame(deltaTime);
+                //render the gui
+                gameStateManager.CurrentGameState?.RenderGui(deltaTime);
+                //swap frame buffers
+                nativeWindow.Context.SwapBuffers();
             }
             Deinitialize();
         }
@@ -117,25 +126,12 @@ namespace BugSouls
 
         private void Update()
         {
-            //process window events
-            nativeWindow.ProcessEvents();
-            //update the currentgamestate
-            gameStateManager.CurrentGameState?.Update(deltaTime);
-            //test load shader
-            if(s == null)
-            {
-                s = shaderManager.LoadShader("./Assets/Shaders/TestShader.txt");
-            }
+            
         }
 
         private void Render()
         {
-            //render the game
-            gameStateManager.CurrentGameState?.RenderGame(deltaTime);
-            //render the gui
-            gameStateManager.CurrentGameState?.RenderGui(deltaTime);
-            //swap frame buffers
-            nativeWindow.Context.SwapBuffers();
+            
         }
 
         private void Deinitialize()
