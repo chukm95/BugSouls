@@ -1,0 +1,19 @@
+﻿$VERTEX
+#version 330 core
+
+uniform mat4 projectionMatrix;
+
+in vec3 position;
+
+void main(){
+	gl_Position = projectionMatrix * vec4(position.xyz, 1);
+}
+
+$FRAGMENT
+#version 330 core
+
+out vec4 color;
+
+void main(){
+	color = vec4(1, 0, 0, 1);
+}

@@ -1,4 +1,5 @@
 ﻿using BugSouls.GamestateManagement;
+using BugSouls.ResourceManagement.Shaders;
 using BugSouls.Util;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -41,6 +42,11 @@ namespace BugSouls
             get => instance.gameStateManager;
         }
 
+        public static ShaderManager ShaderManager
+        {
+            get => instance.shaderManager;
+        }
+
         private NativeWindow nativeWindow;
         private Stopwatch deltaTimer;
         private TimeSpan deltaTime;
@@ -49,6 +55,7 @@ namespace BugSouls
         private Window window;
 
         private GameStateManager gameStateManager;
+        private ShaderManager shaderManager;
 
         private Core()
         {
@@ -100,9 +107,13 @@ namespace BugSouls
             //TODO add gamestates
             //TODO set gamestate
 
+            shaderManager = new ShaderManager();
+
             //final init is telling the game loop we are running
             isRunning = true;
         }
+
+        Shader s;
 
         private void Update()
         {
@@ -110,6 +121,11 @@ namespace BugSouls
             nativeWindow.ProcessEvents();
             //update the currentgamestate
             gameStateManager.CurrentGameState?.Update(deltaTime);
+            //test load shader
+            if(s == null)
+            {
+                s = shaderManager.LoadShader("./Assets/Shaders/TestShader.txt");
+            }
         }
 
         private void Render()

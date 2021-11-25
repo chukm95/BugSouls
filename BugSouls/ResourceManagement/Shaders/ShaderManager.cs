@@ -17,7 +17,23 @@ namespace BugSouls.ResourceManagement.Shaders
         
         public Shader LoadShader(string path)
         {
-
+            if (shaderList.ContainsKey(path))
+            {
+                return shaderList[path];
+            }
+            else
+            {
+                Shader shader = new Shader(path);
+                if (shader.Loaded)
+                {
+                    shaderList.Add(path, shader);
+                    return shader;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
 
