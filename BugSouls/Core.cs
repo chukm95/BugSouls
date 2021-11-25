@@ -1,16 +1,18 @@
-﻿using BugSouls.Util;
+﻿using BugSouls.GamestateManagement;
+using BugSouls.Util;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BugSouls
 {
-    public class Core
+    internal class Core
     {
         private static Core instance;
 
@@ -34,10 +36,19 @@ namespace BugSouls
             get => instance.window;
         }
 
+        public static GameStateManager GameStateManager
+        {
+            get => instance.gameStateManager;
+        }
+
         private NativeWindow nativeWindow;
+        private Stopwatch deltaTimer;
+        private TimeSpan deltaTime;
         private bool isRunning;
 
         private Window window;
+
+        private GameStateManager gameStateManager;
 
         private Core()
         {
@@ -49,6 +60,8 @@ namespace BugSouls
             Initialize();
             while(isRunning)
             {
+                deltaTime = deltaTimer.Elapsed;
+                deltaTimer.Restart();
                 Update();
                 Render();
             }
@@ -72,10 +85,20 @@ namespace BugSouls
             nativeWindow = new NativeWindow(nws);
             nativeWindow.Context.MakeCurrent();
 
+            //create the deltatimer
+            deltaTimer = new Stopwatch();
+            deltaTimer.Start();
+
             //pass native window to the window
             window = new Window(nativeWindow);
             //add the window close request
             window.OnCloseRequested += Quit;
+
+            //create the gamestate manager
+            gameStateManager = new GameStateManager();
+            //add gamestates
+            //TODO add gamestates
+            //TODO set gamestate
 
             //final init is telling the game loop we are running
             isRunning = true;
@@ -85,10 +108,16 @@ namespace BugSouls
         {
             //process window events
             nativeWindow.ProcessEvents();
+            //update the currentgamestate
+            gameStateManager.CurrentGameState?.Update(deltaTime);
         }
 
         private void Render()
         {
+            //render the game
+            gameStateManager.CurrentGameState?.RenderGame(deltaTime);
+            //render the gui
+            gameStateManager.CurrentGameState?.RenderGui(deltaTime);
             //swap frame buffers
             nativeWindow.Context.SwapBuffers();
         }

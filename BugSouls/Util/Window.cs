@@ -7,7 +7,7 @@ namespace BugSouls.Util
     public delegate void OnFocusChange(bool isFocused);
     public delegate void OnCloseRequested();
 
-    public class Window
+    internal class Window
     {
         public int Width
         {
