@@ -128,7 +128,8 @@ namespace BugSouls
             gameStateManager.AddGameState<GS_TriangleTest>(new GS_TriangleTest());
             gameStateManager.AddGameState<GS_BufferTest>(new GS_BufferTest());
             gameStateManager.AddGameState<GS_BufferImageTest>(new GS_BufferImageTest());
-            gameStateManager.SetGameState<GS_BufferImageTest>();
+            gameStateManager.AddGameState<GS_BufferFrameImageTest>(new GS_BufferFrameImageTest());
+            gameStateManager.SetGameState<GS_BufferFrameImageTest>();
 
             //final init is telling the game loop we are running
             isRunning = true;

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BugSouls.GamestateManagement
 {
-    internal class GS_BufferImageTest : GameState
+    internal class GS_BufferFrameImageTest : GameState
     {
         private Batcher batcher;
 
@@ -24,21 +24,18 @@ namespace BugSouls.GamestateManagement
 
         protected override void OnInitialize()
         {
-            Random r = new Random();
+            
 
-            batcher = new Batcher(40, Batcher.ShapeType.QUAD, BufferUsageHint.StaticDraw);
-            batcher.Begin();
-            for(int i = 0; i < 40; i++)
-            {
-                Vector3 position = new Vector3(r.Next(-640, 640), r.Next(-360, 360), -1);
-                Vector3 rotation = new Vector3(0, 0, MathHelper.DegreesToRadians(r.Next(360)));
-                Vector3 scale = new Vector3(16 + r.Next(64), 16 + r.Next(64), 1);
-                Color4 color = new Color4(64 + r.Next(128), 64 + r.Next(128), 64 + r.Next(128), 255);       
-                batcher.Batch(position, rotation, scale, new Vector4(0, 0, 1, 1), color, 0);
-            }
+            TileSheet ts = new TileSheet(2, 2);
+            batcher = new Batcher(4, Batcher.ShapeType.QUAD, BufferUsageHint.StaticDraw);
+            batcher.Begin();            
+            batcher.Batch(new Vector3(-60, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[0], Color4.White, 0);
+            batcher.Batch(new Vector3(-20, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[1], Color4.White, 0);
+            batcher.Batch(new Vector3(20, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[2], Color4.White, 0);
+            batcher.Batch(new Vector3(60, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[3], Color4.White, 0);
             batcher.End();
 
-            testTexture = textureManager.LoadShader("*/Assets/Textures/Test.png");
+            testTexture = textureManager.LoadShader("*/Assets/Textures/FrameTest.png");
             testShader = shaderManager.LoadShader("*/Assets/Shaders/BatchImageTestShader.txt");
             projectionMatrix = testShader["projectionMatrix"];
             textureSampler = testShader["testTexture"];

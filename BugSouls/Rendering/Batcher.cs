@@ -268,56 +268,6 @@ namespace BugSouls.Rendering
             BatchBuffer();
         }
 
-        //test method
-        public void BatchQuad(Vector3 position, Vector3 scale)
-        {
-            if(isBatching && (shapeType & ShapeType.QUAD) == ShapeType.QUAD)
-            {
-                //get the insertion index
-                int insertionIndex = elementCount * templatePositions.Length;
-                //loop through all template positions
-                for(int i = 0; i < templatePositions.Length; i++)
-                {
-                    vertices[insertionIndex + i].position = (templatePositions[i] * scale) + position;
-                    vertices[insertionIndex + i].normal = templateNormals[i];
-                    vertices[insertionIndex + i].uv = templateUvs[i];
-                }
-                elementCount++;
-            }
-        }
-
-        //test methode
-        public void BatchTriangle(Vector3 position, Vector3 scale)
-        {
-            if (isBatching && (shapeType & ShapeType.TRIANGLE) == ShapeType.TRIANGLE)
-            {
-                //get the insertion index
-                int insertionIndex = elementCount * templatePositions.Length;
-                //loop through all template positions
-                for (int i = 0; i < templatePositions.Length; i++)
-                {
-                    vertices[insertionIndex + i].position = (templatePositions[i] * scale) + position;
-                    vertices[insertionIndex + i].normal = templateNormals[i];
-                    vertices[insertionIndex + i].uv = templateUvs[i];
-                }
-                elementCount++;
-            }
-        }
-
-        //test methode
-        public void BatchLine(Vector3 position_start, Vector3 position_end)
-        {
-            if (isBatching && (shapeType & ShapeType.LINE) == ShapeType.LINE)
-            {
-                //get the insertion index
-                int insertionIndex = elementCount * templatePositions.Length;
-                vertices[insertionIndex].position = position_start;
-                vertices[insertionIndex + 1].position = position_end;
-
-                elementCount++;
-            }
-        }
-
         public void Batch(Vector3 position, Vector3 rotation, Vector3 scale, Vector4 uv, Color4 color, float texChannel)
         {
             if (isBatching)
@@ -341,29 +291,10 @@ namespace BugSouls.Rendering
             }
         }
 
-        //TODO time
-        //public void Batch(Matrix4 transform, Vector4 uv, Color4 color, float texChannel)
-        //{
-        //    if (isBatching)
-        //    {
-        //        //get the insertion index
-        //        int insertionIndex = elementCount * templatePositions.Length;
-        //        //loop through all template positions
-        //        for (int i = 0; i < templatePositions.Length; i++)
-        //        {
-        //            vertices[insertionIndex + i].position = Vector3.TransformVector(templatePositions[i], transform);                    
-        //            vertices[insertionIndex + i].normal = templateNormals[i];
-        //            vertices[insertionIndex + i].uv = uv.Xy + (templateUvs[i] * uv.Zw);
-        //            vertices[insertionIndex + i].color = new Vector4(color.R, color.G, color.B, color.A);
-        //            vertices[insertionIndex + i].texChannel = texChannel;
-        //        }
-        //        elementCount++;
-        //    }
-        //}
-
         public void BatchLine(Vector3 startPosition, Vector4 endPosition, Color4 color)
         {
-
+            //TODO create line batching
+            
         }
 
         private void BatchBuffer()
