@@ -112,32 +112,24 @@ namespace BugSouls
 
             //create the gamestate manager
             gameStateManager = new GameStateManager();
-            //add gamestates
-            //TODO add gamestates
-            //TODO set gamestate
-
+            //create the shader manager
             shaderManager = new ShaderManager();
+
+            //add gamestates
+            gameStateManager.AddGameState<GS_TriangleTest>(new GS_TriangleTest());
+            gameStateManager.AddGameState<GS_BufferTest>(new GS_BufferTest());
+            gameStateManager.SetGameState<GS_BufferTest>();
 
             //final init is telling the game loop we are running
             isRunning = true;
-        }
-
-        Shader s;
-
-        private void Update()
-        {
-            
-        }
-
-        private void Render()
-        {
-            
         }
 
         private void Deinitialize()
         {
             //close window
             nativeWindow.Close();
+            //cleanup all shaders
+            shaderManager.CleanUp();
             //exit game
             Environment.Exit(0);
         }

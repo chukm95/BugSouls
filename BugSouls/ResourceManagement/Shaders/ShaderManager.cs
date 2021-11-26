@@ -17,6 +17,12 @@ namespace BugSouls.ResourceManagement.Shaders
         
         public Shader LoadShader(string path)
         {
+            if(path.Contains('*'))
+            {
+                path = path.Replace("*", Directory.GetCurrentDirectory());
+                path = path.Replace("/", "\\");
+            }
+
             if (shaderList.ContainsKey(path))
             {
                 return shaderList[path];
@@ -34,6 +40,16 @@ namespace BugSouls.ResourceManagement.Shaders
                     return null;
                 }
             }
+        }
+
+        //TODO add shader unload function
+        public void CleanUp()
+        {
+            foreach(Shader s in shaderList.Values)
+            {
+                s.Delete();
+            }
+            shaderList.Clear();
         }
 
 

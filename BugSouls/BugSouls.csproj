@@ -12,10 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Rendering\" />
+    <Folder Include="ResourceManagement\Fonts\" />
+    <Folder Include="ResourceManagement\Textures\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\Shaders\BatchTestShader.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Shaders\TestShader.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

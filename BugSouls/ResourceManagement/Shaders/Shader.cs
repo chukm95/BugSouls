@@ -48,6 +48,8 @@ namespace BugSouls.ResourceManagement.Shaders
             program = -1;
             shaderUniforms = new Dictionary<string, ShaderUniform>();
             loaded = Load();
+            if(!loaded)
+                program = -1;
         }
 
         private bool Load()
@@ -179,7 +181,8 @@ namespace BugSouls.ResourceManagement.Shaders
 
             if (compileStatus == 0)
             {
-                Console.WriteLine($"Cannot compile {shaderType.ToString()} shader for {path}!");
+                Console.WriteLine($"Cannot compile {shaderType.ToString()} shader for {path}!");                
+                Console.WriteLine(GL.GetShaderInfoLog(shaderIdTemp));
                 GL.DeleteShader(shaderIdTemp);
                 shaderId = -1;
                 return false;
@@ -200,6 +203,17 @@ namespace BugSouls.ResourceManagement.Shaders
                 ShaderUniform su = new ShaderUniform(program, i, this);
                 shaderUniforms.Add(su.Name, su);
             }
+        }
+
+        public void Bind()
+        {
+            if(loaded)
+                GL.UseProgram(program);
+        }
+
+        public void Delete()
+        {
+            GL.DeleteProgram(program);
         }
     }
 }

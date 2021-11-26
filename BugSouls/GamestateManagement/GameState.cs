@@ -1,4 +1,5 @@
-﻿using BugSouls.Util;
+﻿using BugSouls.ResourceManagement.Shaders;
+using BugSouls.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,15 @@ namespace BugSouls.GamestateManagement
     {
         private bool isInitialized;
         protected readonly Window window;
+        protected readonly GameStateManager gameStateManager;
+        protected readonly ShaderManager shaderManager;
 
         protected GameState()
         {
             isInitialized = false;
             window = Core.Window;
+            gameStateManager = Core.GameStateManager;
+            shaderManager = Core.ShaderManager;
         }
 
         public void Initialize()
@@ -27,8 +32,7 @@ namespace BugSouls.GamestateManagement
             }
         }
 
-        protected abstract bool OnInitialize();
-
+        protected abstract void OnInitialize();
 
         public abstract void Update(TimeSpan deltaTime);
 
