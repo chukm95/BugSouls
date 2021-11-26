@@ -9,18 +9,24 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.6.7" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ResourceManagement\Fonts\" />
-    <Folder Include="ResourceManagement\Textures\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\Shaders\BatchImageTestShader.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Shaders\BatchTestShader.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Shaders\TestShader.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Textures\Test.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

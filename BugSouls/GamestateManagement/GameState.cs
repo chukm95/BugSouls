@@ -1,4 +1,5 @@
 ﻿using BugSouls.ResourceManagement.Shaders;
+using BugSouls.ResourceManagement.Textures;
 using BugSouls.Util;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace BugSouls.GamestateManagement
         protected readonly Window window;
         protected readonly GameStateManager gameStateManager;
         protected readonly ShaderManager shaderManager;
+        protected readonly TextureManager textureManager;
 
         protected GameState()
         {
@@ -21,6 +23,7 @@ namespace BugSouls.GamestateManagement
             window = Core.Window;
             gameStateManager = Core.GameStateManager;
             shaderManager = Core.ShaderManager;
+            textureManager = Core.TextureManager;
         }
 
         public void Initialize()

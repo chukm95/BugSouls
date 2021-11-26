@@ -1,5 +1,6 @@
 ﻿using BugSouls.GamestateManagement;
 using BugSouls.ResourceManagement.Shaders;
+using BugSouls.ResourceManagement.Textures;
 using BugSouls.Util;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -47,6 +48,11 @@ namespace BugSouls
             get => instance.shaderManager;
         }
 
+        public static TextureManager TextureManager
+        {
+            get => instance.textureManager;
+        }
+
         private NativeWindow nativeWindow;
         private Stopwatch deltaTimer;
         private TimeSpan deltaTime;
@@ -56,6 +62,7 @@ namespace BugSouls
 
         private GameStateManager gameStateManager;
         private ShaderManager shaderManager;
+        private TextureManager textureManager;
 
         private Core()
         {
@@ -114,11 +121,14 @@ namespace BugSouls
             gameStateManager = new GameStateManager();
             //create the shader manager
             shaderManager = new ShaderManager();
+            //create the texture manager
+            textureManager = new TextureManager();
 
             //add gamestates
             gameStateManager.AddGameState<GS_TriangleTest>(new GS_TriangleTest());
             gameStateManager.AddGameState<GS_BufferTest>(new GS_BufferTest());
-            gameStateManager.SetGameState<GS_BufferTest>();
+            gameStateManager.AddGameState<GS_BufferImageTest>(new GS_BufferImageTest());
+            gameStateManager.SetGameState<GS_BufferImageTest>();
 
             //final init is telling the game loop we are running
             isRunning = true;
@@ -130,6 +140,8 @@ namespace BugSouls
             nativeWindow.Close();
             //cleanup all shaders
             shaderManager.CleanUp();
+            //clean up textures
+            textureManager.CleanUp();
             //exit game
             Environment.Exit(0);
         }

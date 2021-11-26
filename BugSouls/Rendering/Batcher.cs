@@ -341,25 +341,25 @@ namespace BugSouls.Rendering
             }
         }
 
-        public void Batch(Matrix4 transform, Vector4 uv, Color4 color, float texChannel)
-        {
-            if (isBatching)
-            {
-                //get the insertion index
-                int insertionIndex = elementCount * templatePositions.Length;
-                //loop through all template positions
-                for (int i = 0; i < templatePositions.Length; i++)
-                {
-                    vertices[insertionIndex + i].position = Matrix4. //Vector3.TransformVector(templatePositions[i], transform);
-                    Console.WriteLine(vertices[insertionIndex + i].position.ToString());
-                    vertices[insertionIndex + i].normal = templateNormals[i];
-                    vertices[insertionIndex + i].uv = uv.Xy + (templateUvs[i] * uv.Zw);
-                    vertices[insertionIndex + i].color = new Vector4(color.R, color.G, color.B, color.A);
-                    vertices[insertionIndex + i].texChannel = texChannel;
-                }
-                elementCount++;
-            }
-        }
+        //TODO time
+        //public void Batch(Matrix4 transform, Vector4 uv, Color4 color, float texChannel)
+        //{
+        //    if (isBatching)
+        //    {
+        //        //get the insertion index
+        //        int insertionIndex = elementCount * templatePositions.Length;
+        //        //loop through all template positions
+        //        for (int i = 0; i < templatePositions.Length; i++)
+        //        {
+        //            vertices[insertionIndex + i].position = Vector3.TransformVector(templatePositions[i], transform);                    
+        //            vertices[insertionIndex + i].normal = templateNormals[i];
+        //            vertices[insertionIndex + i].uv = uv.Xy + (templateUvs[i] * uv.Zw);
+        //            vertices[insertionIndex + i].color = new Vector4(color.R, color.G, color.B, color.A);
+        //            vertices[insertionIndex + i].texChannel = texChannel;
+        //        }
+        //        elementCount++;
+        //    }
+        //}
 
         public void BatchLine(Vector3 startPosition, Vector4 endPosition, Color4 color)
         {
