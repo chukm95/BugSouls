@@ -1,5 +1,6 @@
 ﻿using BugSouls.GamestateManagement;
 using BugSouls.GamestateManagement.TestState;
+using BugSouls.ResourceManagement.Fonts;
 using BugSouls.ResourceManagement.Shaders;
 using BugSouls.ResourceManagement.Textures;
 using BugSouls.Util;
@@ -131,6 +132,9 @@ namespace BugSouls
             gameStateManager.AddGameState<GS_BufferImageTest>(new GS_BufferImageTest());
             gameStateManager.AddGameState<GS_BufferFrameImageTest>(new GS_BufferFrameImageTest());
             gameStateManager.SetGameState<GS_BufferFrameImageTest>();
+
+            //test font
+            FontMap fm = new FontMap("test", "./Assets/Fonts/Outfit/Outfit-VariableFont_wght.ttf", 24);
 
             //final init is telling the game loop we are running
             isRunning = true;
