@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BugSouls.GamestateManagement
+namespace BugSouls.GamestateManagement.TestState
 {
     internal class GS_BufferTest : GameState
     {
