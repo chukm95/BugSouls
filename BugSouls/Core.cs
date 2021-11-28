@@ -1,5 +1,6 @@
 ﻿using BugSouls.GamestateManagement;
 using BugSouls.GamestateManagement.TestState;
+using BugSouls.Rendering;
 using BugSouls.ResourceManagement.Fonts;
 using BugSouls.ResourceManagement.Shaders;
 using BugSouls.ResourceManagement.Textures;
@@ -55,6 +56,11 @@ namespace BugSouls
             get => instance.textureManager;
         }
 
+        public static FontManager FontManager
+        {
+            get => instance.fontManager;
+        }
+
         private NativeWindow nativeWindow;
         private Stopwatch deltaTimer;
         private TimeSpan deltaTime;
@@ -65,6 +71,8 @@ namespace BugSouls
         private GameStateManager gameStateManager;
         private ShaderManager shaderManager;
         private TextureManager textureManager;
+        private FontManager fontManager;
+        private TextRenderer textRenderer;
 
         private Core()
         {
@@ -87,6 +95,12 @@ namespace BugSouls
                 gameStateManager.CurrentGameState?.RenderGame(deltaTime);
                 //render the gui
                 gameStateManager.CurrentGameState?.RenderGui(deltaTime);
+
+                if(nativeWindow.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A))
+                    gameStateManager.SetGameState<GS_BufferFrameImageTest>();
+                else if (nativeWindow.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
+                    gameStateManager.SetGameState<GS_TextRenderTest>();
+
                 //swap frame buffers
                 nativeWindow.Context.SwapBuffers();
             }
@@ -125,16 +139,18 @@ namespace BugSouls
             shaderManager = new ShaderManager();
             //create the texture manager
             textureManager = new TextureManager();
+            //create fontmanager
+            fontManager = new FontManager();
+            
 
             //add gamestates
             gameStateManager.AddGameState<GS_TriangleTest>(new GS_TriangleTest());
             gameStateManager.AddGameState<GS_BufferTest>(new GS_BufferTest());
             gameStateManager.AddGameState<GS_BufferImageTest>(new GS_BufferImageTest());
             gameStateManager.AddGameState<GS_BufferFrameImageTest>(new GS_BufferFrameImageTest());
+            gameStateManager.AddGameState<GS_TextRenderTest>(new GS_TextRenderTest());
             gameStateManager.SetGameState<GS_BufferFrameImageTest>();
 
-            //test font
-            FontMap fm = new FontMap("test", "./Assets/Fonts/Outfit/Outfit-VariableFont_wght.ttf", 24);
 
             //final init is telling the game loop we are running
             isRunning = true;

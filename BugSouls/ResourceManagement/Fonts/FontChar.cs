@@ -24,5 +24,6 @@ namespace BugSouls.ResourceManagement.Fonts
         public float tex_z;
         public float tex_w;
         public Vector4 texCoords;
+        public Vector4 pxCoords;
     }
 }

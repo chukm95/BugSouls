@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace BugSouls.GamestateManagement.TestState
 {
-    internal class GS_BufferFrameImageTest : GameState
+    internal class GS_TextRenderTest : GameState
     {
-        private Batcher batcher;
-        private Texture testTexture;
+        private FontMap fm;
+        private TextRenderer textRenderer;
 
         private Shader testShader;        
         private ShaderUniform projectionMatrix;
@@ -24,17 +24,11 @@ namespace BugSouls.GamestateManagement.TestState
 
         protected override void OnInitialize()
         {
-            TileSheet ts = new TileSheet(2, 2);
-            batcher = new Batcher(4, Batcher.ShapeType.QUAD, BufferUsageHint.StaticDraw);
-            batcher.Begin();            
-            batcher.Batch(new Vector3(-60, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[0], Color4.White, 0);
-            batcher.Batch(new Vector3(-20, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[1], Color4.White, 0);
-            batcher.Batch(new Vector3(20, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[2], Color4.White, 0);
-            batcher.Batch(new Vector3(60, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[3], Color4.White, 0);
-            batcher.End();
+            fm = fontManager.LoadFontMap("Outfit_24", "*/Assets/Fonts/Outfit/Outfit-VariableFont_wght.ttf", 24);
+            textRenderer = new TextRenderer();
+            textRenderer.BufferString(fm, "Test\ntest", new Vector2i(-600, 32), Color4.White);
 
-            testTexture = textureManager.LoadShader("*/Assets/Textures/FrameTest.png");
-            testShader = shaderManager.LoadShader("*/Assets/Shaders/BatchImageTestShader.txt");
+            testShader = shaderManager.LoadShader("*/Assets/Shaders/TextTestShader.txt");
             projectionMatrix = testShader["projectionMatrix"];
             textureSampler = testShader["testTexture"];
 
@@ -55,9 +49,8 @@ namespace BugSouls.GamestateManagement.TestState
             testShader.Bind();
             projectionMatrix.Set(projectionMat);
             textureSampler.Set(0);
-            testTexture.BindTexture(0);
 
-            batcher.Draw();
+            textRenderer.Draw();
         }
 
         public override void RenderGui(TimeSpan deltaTime)
@@ -67,7 +60,7 @@ namespace BugSouls.GamestateManagement.TestState
 
         protected override void OnDeinitialize()
         {
-            batcher.Dispose();
+            textRenderer.Dispose();
         }
         
     }

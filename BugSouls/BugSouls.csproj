@@ -50,6 +50,9 @@
     <None Update="Assets\Fonts\Outfit\static\Outfit-Thin.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Shaders\TextTestShader.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Shaders\BatchImageTestShader.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

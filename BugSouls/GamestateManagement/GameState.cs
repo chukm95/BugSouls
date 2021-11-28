@@ -1,4 +1,5 @@
-﻿using BugSouls.ResourceManagement.Shaders;
+﻿using BugSouls.ResourceManagement.Fonts;
+using BugSouls.ResourceManagement.Shaders;
 using BugSouls.ResourceManagement.Textures;
 using BugSouls.Util;
 using System;
@@ -16,6 +17,7 @@ namespace BugSouls.GamestateManagement
         protected readonly GameStateManager gameStateManager;
         protected readonly ShaderManager shaderManager;
         protected readonly TextureManager textureManager;
+        protected readonly FontManager fontManager;
 
         protected GameState()
         {
@@ -24,6 +26,7 @@ namespace BugSouls.GamestateManagement
             gameStateManager = Core.GameStateManager;
             shaderManager = Core.ShaderManager;
             textureManager = Core.TextureManager;
+            fontManager = Core.FontManager;
         }
 
         public void Initialize()

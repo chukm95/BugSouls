@@ -34,10 +34,20 @@ namespace BugSouls.ResourceManagement.Fonts
             get => loaded;
         }
 
+        public int Size
+        {
+            get => size;
+        }
+
+        public int Padding
+        {
+            get => padding;
+        }
+
         private string name;
         private string path;
         private int size;
-        public int padding;
+        private int padding;
         Dictionary<char, FontChar> characters;
         private int textureId;
         private bool loaded;
@@ -66,12 +76,15 @@ namespace BugSouls.ResourceManagement.Fonts
             int totalWidth = padding;
             byte[] data;
 
+            int imageWidth;
+            int imageHeight;
+
             using (SKFont skFont = new SKFont(SKTypeface.FromFile(path), size))
             {
                 using (SKPaint skPaint = new SKPaint(skFont))
                 {
                     skPaint.TextAlign = SKTextAlign.Left;
-                    skPaint.LcdRenderText = false;
+                    skPaint.LcdRenderText = true;
                     skPaint.IsAntialias = false;
                     skPaint.Color = new SKColor(255, 255, 255, 255);
                     advances = skPaint.GetGlyphWidths(defaultChars, out bounds);
@@ -117,12 +130,16 @@ namespace BugSouls.ResourceManagement.Fonts
                             for (int i = 0; i < defaultChars.Length; i++)
                             {
                                 FontChar fc = characters[i];
-                                fc.texCoords = new Vector4(fc.tex_x, skBitmap.Height - fc.tex_w - padding, fc.tex_z, fc.tex_w) * new Vector4(tex_coord_width, tex_coord_height, tex_coord_width, tex_coord_height);
+                                fc.pxCoords = new Vector4(fc.tex_x, padding, fc.tex_z, fc.tex_w);
+                                fc.texCoords = fc.pxCoords * new Vector4(tex_coord_width, tex_coord_height, tex_coord_width, tex_coord_height);
                                 this.characters.Add(fc.character, fc);
-                                skCanvas.DrawText(defaultChars[i].ToString(), offset - fc.offsetX, padding + Math.Abs(fc.top), skPaint);
+                                skCanvas.DrawText(defaultChars[i].ToString(), offset - fc.offsetX, (padding + Math.Abs(fc.top)), skPaint);
                                 offset += (int)Math.Ceiling(bounds[i].Width) + padding;
                             }
+
                         }
+                        imageWidth = skBitmap.Width;
+                        imageHeight = skBitmap.Height;
                         data = skBitmap.Bytes;
                     }
                 }
@@ -134,7 +151,7 @@ namespace BugSouls.ResourceManagement.Fonts
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, totalWidth + padding, size + padding, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, imageWidth, imageHeight, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
             return true;
         }
 

@@ -15,7 +15,7 @@ namespace BugSouls.ResourceManagement.Fonts
             fontList = new Dictionary<string, FontMap>();
         }
 
-        public FontMap LoadShader(string name, string path, int size)
+        public FontMap LoadFontMap(string name, string path, int size)
         {
             if (path.Contains('*'))
             {

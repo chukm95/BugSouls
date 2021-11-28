@@ -30,10 +30,10 @@ namespace BugSouls.Rendering
             TRIANGLE = 2,
             QUAD = 4,
             CIRCLE_P16 = 8,
-            CIRCLE_P32 = 16, 
+            CIRCLE_P32 = 16,
             CIRCLE_P64 = 32,
             CIRCLE_P128 = 64,
-            CENTERED = 128 
+            CENTERED = 128
         }
 
 
@@ -180,12 +180,12 @@ namespace BugSouls.Rendering
             templateUvs[points] = new Vector2(0.5f, 0.5f);
 
             //get the incremental angle
-            double angle = MathHelper.DegreesToRadians(360.0 / points);                    
+            double angle = MathHelper.DegreesToRadians(360.0 / points);
 
             //loop through all the vertices in the circle
-            for(int i = 0; i < points; i++)
+            for (int i = 0; i < points; i++)
             {
-                templatePositions[i] = new Vector3((float)Math.Sin(angle * i),(float) Math.Cos(angle * i), 0);
+                templatePositions[i] = new Vector3((float)Math.Sin(angle * i), (float)Math.Cos(angle * i), 0);
                 templateNormals[i] = Vector3.UnitZ;
                 //we need to add 0.5 to get into to 0 to 1 range instead of the -0.5 to 0.5 range
                 templateUvs[i] = new Vector2((float)Math.Sin(angle * i), (float)Math.Cos(angle * i)) + templateUvs[points];
@@ -196,12 +196,12 @@ namespace BugSouls.Rendering
             templateIndices = new uint[points * 3];
 
             //loop through every "slice"
-            for(int i = 0; i < points; i++)
+            for (int i = 0; i < points; i++)
             {
                 int index = i * 3;
-                templateIndices[index    ] = (uint)i;
+                templateIndices[index] = (uint)i;
                 //mod points because the center index is not to be taken into account
-                templateIndices[index + 1] = (uint)((i + 1)%points);
+                templateIndices[index + 1] = (uint)((i + 1) % points);
                 //always the center vertex
                 templateIndices[index + 2] = (uint)points;
             }
@@ -210,11 +210,11 @@ namespace BugSouls.Rendering
         private void CalculateAllIndices()
         {
             //loop through all elements in the 
-            for(int i = 0; i < bufferSize; i++)
+            for (int i = 0; i < bufferSize; i++)
             {
                 int index = i * templateIndices.Length;
 
-                for(int templateIndex = 0; templateIndex < templateIndices.Length; templateIndex++)
+                for (int templateIndex = 0; templateIndex < templateIndices.Length; templateIndex++)
                 {
                     indices[index + templateIndex] = templateIndices[templateIndex] + (uint)(templatePositions.Length * i);
                 }
@@ -248,7 +248,7 @@ namespace BugSouls.Rendering
 
         public void Begin()
         {
-            if(isBatching)
+            if (isBatching)
             {
                 throw new InvalidOperationException("Cannot begin batching when already batching!");
             }
@@ -259,7 +259,7 @@ namespace BugSouls.Rendering
 
         public void End()
         {
-            if(!isBatching)
+            if (!isBatching)
             {
                 throw new InvalidOperationException("Cannot end batching when it hasnt begon batching!");
             }
@@ -281,7 +281,7 @@ namespace BugSouls.Rendering
                 //loop through all template positions
                 for (int i = 0; i < templatePositions.Length; i++)
                 {
-                    vertices[insertionIndex + i].position = Vector3.Transform(templatePositions[i] * scale, rotationQuat) + position; 
+                    vertices[insertionIndex + i].position = Vector3.Transform(templatePositions[i] * scale, rotationQuat) + position;
                     vertices[insertionIndex + i].normal = templateNormals[i];
                     vertices[insertionIndex + i].uv = uv.Xy + (templateUvs[i] * uv.Zw);
                     vertices[insertionIndex + i].color = new Vector4(color.R, color.G, color.B, color.A) / 255f;
@@ -294,7 +294,7 @@ namespace BugSouls.Rendering
         public void BatchLine(Vector3 startPosition, Vector4 endPosition, Color4 color)
         {
             //TODO create line batching
-            
+
         }
 
         private void BatchBuffer()
@@ -311,6 +311,7 @@ namespace BugSouls.Rendering
             GL.EnableVertexAttribArray(1);
             GL.EnableVertexAttribArray(2);
             GL.EnableVertexAttribArray(3);
+            GL.EnableVertexAttribArray(4);
 
             GL.DrawElements(primitiveType, elementCount * templateIndices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
@@ -318,6 +319,7 @@ namespace BugSouls.Rendering
             GL.DisableVertexAttribArray(1);
             GL.DisableVertexAttribArray(2);
             GL.DisableVertexAttribArray(3);
+            GL.DisableVertexAttribArray(4);
         }
 
         public void Dispose()
