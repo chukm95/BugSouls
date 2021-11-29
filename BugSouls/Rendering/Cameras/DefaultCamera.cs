@@ -14,7 +14,7 @@ namespace BugSouls.Rendering.Cameras
     internal class DefaultCamera
     {
         private readonly float FOV = MathHelper.DegreesToRadians(90f);
-        private readonly float zNear = 0.1f;
+        private readonly float zNear = -20000f;
         private readonly float zFar = 20000f;
         private readonly float RotationInRadians = MathHelper.DegreesToRadians(90);
         private readonly float FullRotationRad = MathHelper.DegreesToRadians(360);
@@ -71,7 +71,7 @@ namespace BugSouls.Rendering.Cameras
         public DefaultCamera()
         {
             position_lookAt = new Vector3(16f, 0, 16f) * 32f;
-            position_camera = new Vector3(0f, 1f, 1.3f) * 32f;
+            position_camera = new Vector3(0f, 1.75f, 1.3f) * 32f;
 
             window = Core.Window;
             window.OnResize += Window_OnResize;
@@ -113,9 +113,9 @@ namespace BugSouls.Rendering.Cameras
             else
             {
                 if(rotationDirection == RotationDirection.LEFT)
-                    angleTransition -= (float)deltaTime.TotalSeconds * 180f;
+                    angleTransition -= (float)deltaTime.TotalSeconds * 90f;
                 else
-                    angleTransition += (float)deltaTime.TotalSeconds * 180f;
+                    angleTransition += (float)deltaTime.TotalSeconds * 90f;
                 if (Math.Abs(angleTransition) >= 90f)
                 {
                     if (rotationDirection == RotationDirection.LEFT)

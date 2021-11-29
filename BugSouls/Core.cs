@@ -119,8 +119,9 @@ namespace BugSouls
             nws.API = ContextAPI.OpenGL;
             nws.APIVersion = new Version(3, 3);
 
-            nativeWindow = new NativeWindow(nws);
+            nativeWindow = new NativeWindow(nws);            
             nativeWindow.Context.MakeCurrent();
+            nativeWindow.Context.SwapInterval = 1;
 
             //create the deltatimer
             deltaTimer = new Stopwatch();
@@ -142,8 +143,9 @@ namespace BugSouls
 
             renderer = new Renderer();
 
+            gameStateManager.AddGameState<GS_TextRenderTest>(new GS_TextRenderTest());
             gameStateManager.AddGameState<GS_LevelEditor>(new GS_LevelEditor());
-            gameStateManager.SetGameState<GS_LevelEditor>();
+            gameStateManager.SetGameState<GS_TextRenderTest>();
 
             //final init is telling the game loop we are running
             isRunning = true;
@@ -152,8 +154,14 @@ namespace BugSouls
 
         private void Update()
         {
+            if (nativeWindow.IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A))
+                gameStateManager.SetGameState<GS_LevelEditor>();
+            else if (nativeWindow.IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
+                gameStateManager.SetGameState<GS_TextRenderTest>();
+
             //update the currentgamestate
-            gameStateManager.CurrentGameState?.Update(deltaTime);           
+            gameStateManager.CurrentGameState?.Update(deltaTime);        
+            
         }
 
 

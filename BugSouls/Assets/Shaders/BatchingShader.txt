@@ -20,13 +20,14 @@ void main(){
 	f_normal = v_normal;
 	f_uv = v_uv;
 	f_color = v_color;
-	f_texChan = f_texChan;
+	f_texChan = v_texChan;
 	gl_Position = projectionMatrix * vec4(v_position.xyz, 1);
 }
 
 $FRAGMENT
 #version 330 core
 
+uniform bool useLight;
 uniform vec3 ambient;
 uniform vec3 diffuse_dir;
 uniform vec3 diffuse_color;
@@ -42,9 +43,28 @@ in float f_texChan;
 out vec4 color;
 
 void main(){
-	vec3 norm = normalize(f_normal);
-	vec3 difdir = normalize(diffuse_dir - f_position); 
-	float dif = max(dot(norm, difdir), 0.0);
-	vec3 diffuse = dif * diffuse_color;
-	color = vec4(ambient + diffuse, 1.0) * (texture(sampler, f_uv) * f_color);
+	vec4 texSamp;
+	switch(int(f_texChan))
+	{
+	case 0: 
+		texSamp = texture(sampler, f_uv) * f_color;
+		break;
+	case 1: 
+		texSamp = texture(sampler, f_uv);
+		break;
+	case 2: 
+		texSamp = f_color;
+		break;
+	}
+	
+	color = texSamp;
+
+	if(useLight)
+	{
+		vec3 norm = normalize(f_normal);
+		vec3 difdir = normalize(diffuse_dir - f_position); 
+		float dif = max(dot(norm, difdir), 0.0);
+		vec3 diffuse = dif * diffuse_color;
+		color *= vec4(ambient + diffuse, 1.0);
+	}
 }

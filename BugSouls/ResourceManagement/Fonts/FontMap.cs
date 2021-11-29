@@ -84,7 +84,8 @@ namespace BugSouls.ResourceManagement.Fonts
                 using (SKPaint skPaint = new SKPaint(skFont))
                 {
                     skPaint.TextAlign = SKTextAlign.Left;
-                    skPaint.LcdRenderText = true;
+                    skPaint.LcdRenderText = false;
+                    skPaint.FakeBoldText = true;
                     skPaint.IsAntialias = false;
                     skPaint.Color = new SKColor(255, 255, 255, 255);
                     advances = skPaint.GetGlyphWidths(defaultChars, out bounds);
@@ -116,8 +117,8 @@ namespace BugSouls.ResourceManagement.Fonts
                         totalWidth += (int)Math.Ceiling(sr.Width) + padding;
                     }
 
-                    using (SKBitmap skBitmap = new SKBitmap(totalWidth + padding, size + padding, true))
-                    {
+                    using (SKBitmap skBitmap = new SKBitmap(totalWidth + padding, size + padding, SKColorType.Rgba8888, SKAlphaType.Opaque))
+                    {                        
                         using (SKCanvas skCanvas = new SKCanvas(skBitmap))
                         {                            
                             skPaint.Color = new SKColor(255, 255, 255, 255);
@@ -153,6 +154,44 @@ namespace BugSouls.ResourceManagement.Fonts
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, imageWidth, imageHeight, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
             return true;
+        }
+
+        public Vector4 MeassureString(string text)
+        {
+            float widthTotal = 0;
+            float heightTotal = size + padding;
+            float widthLine = 0;
+            int advance = 0;
+
+            for(int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                FontChar fc = this[c];
+                if(c!='\n')
+                {
+                    widthLine = advance + fc.width + padding + padding;
+                    advance += (int)fc.advance;
+                }
+                else if(c=='\n')
+                {
+                    //widthLine += padding;
+                    if(widthLine >= widthTotal)
+                    {
+                        widthTotal = widthLine;
+                    }
+                    widthLine = 0;
+                    advance = 0;
+                    heightTotal += size + padding;
+                }
+            }
+
+            widthLine += padding;
+            if (widthLine >= widthTotal)
+            {
+                widthTotal = widthLine;
+            }
+
+            return new Vector4(-padding, size - padding - padding, widthTotal, heightTotal + padding);
         }
 
         public void BindTexture(int texUnit)

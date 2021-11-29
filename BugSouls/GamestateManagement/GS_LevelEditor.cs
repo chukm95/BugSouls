@@ -23,38 +23,46 @@ namespace BugSouls.GamestateManagement
 
         private Shader shader;
         private ShaderUniform su_projectionMatrix;
+        private ShaderUniform su_useLight;
         private ShaderUniform su_ambient;
         private ShaderUniform su_diffuse_dir;
         private ShaderUniform su_diffuse_col;
         private ShaderUniform su_texture;
 
+        private Line ray;
         private DefaultCamera camera;
 
         private Room levelEditRoom;
 
         protected override void OnInitialize()
         {
-            shader = Core.ShaderManager.LoadShader("*/Assets/Shaders/BatchingShader.txt");
+            shader = shaderManager.LoadShader("*/Assets/Shaders/BatchingShader.txt");
             su_projectionMatrix = shader["projectionMatrix"];
+            su_useLight = shader["useLight"];
             su_ambient = shader["ambient"];
             su_diffuse_dir = shader["diffuse_dir"];
             su_diffuse_col = shader["diffuse_color"];
             su_texture = shader["sampler"];
 
+            ray = new Line();
             camera = new DefaultCamera();
             levelEditRoom = new Room();
         }
 
         public override void Update(TimeSpan deltaTime)
         {
-            levelEditRoom.Update();
-            camera.Update(deltaTime);            
+            camera.Update(deltaTime);
+            camera.CastRayCorrectedForPlane(ref ray);
+            ray.max.X = (int)(((ray.max.X+16) / 32f));
+            ray.max.Z = (int)(((ray.max.Z+16) / 32f));
+            levelEditRoom.Update(ray.max);           
         }
 
         public override void RenderGame(TimeSpan deltaTime)
         {
             shader.Bind();
             su_projectionMatrix.Set(camera.ViewProjection);
+            su_useLight.Set(true);
             su_ambient.Set(new Vector3(0.4f, 0.4f, 0.4f));
             su_diffuse_dir.Set(new Vector3(5000, 10000, 10000) * 32f);
             su_diffuse_col.Set(new Vector3(0.6f, 0.6f, 0.6f));

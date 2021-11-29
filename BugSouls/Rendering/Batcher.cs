@@ -143,6 +143,7 @@ namespace BugSouls.Rendering
                 templateIndices = new uint[]
                 {
                     0, 1, 2,   0, 2, 3
+                    //0, 2, 1,   0, 3, 2
                 };
             }
             else if ((shapeType & ShapeType.CIRCLE_P16) == ShapeType.CIRCLE_P16)
@@ -166,6 +167,14 @@ namespace BugSouls.Rendering
                 GenerateCircleTemplate(128);
             }
             //TODO if not centered offset all the vertices by 0.5f
+            if((shapeType & ShapeType.CENTERED) == ShapeType.CENTERED)
+            {
+                for(int i = 0; i < templatePositions.Length; i++)
+                {
+                    templatePositions[i].X += 0.5f;
+                    templatePositions[i].Y += 0.5f;
+                }
+            }
         }
 
         private void GenerateCircleTemplate(int points)

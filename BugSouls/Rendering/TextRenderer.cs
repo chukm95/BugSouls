@@ -43,7 +43,8 @@ namespace BugSouls.Rendering
 
         private ushort[] quadIndices = new ushort[]
         {
-            0, 1, 2, 0, 2, 3
+            //0, 1, 2, 0, 2, 3
+            0, 2, 1,   0, 3, 2
         };
 
         private int vao_id;
@@ -100,22 +101,24 @@ namespace BugSouls.Rendering
             GL.BufferData(BufferTarget.ElementArrayBuffer, sizeof(ushort) * indices.Length, indices, BufferUsageHint.DynamicDraw);
         }
 
+        
+
         public void BufferString(FontMap fontMap, string text, Vector2i position, Color4 color)
         {
             if (text.Length > MAX_STRING_SIZE)
                 throw new Exception("maximum of 1000 chars!");
 
             this.fontMap = fontMap;
-            numOfChars = text.Length;
+            numOfChars = 0;
 
             int offset = 0;
 
-            for(int i = 0; i < numOfChars; i++)
+            for(int i = 0; i < text.Length; i++)
             {
                 FontChar fc = fontMap[text[i]];
                 if (text[i] != '\n')
                 {
-                    int insertionIndex = i * VERTICES_PER_QUAD;
+                    int insertionIndex = numOfChars * VERTICES_PER_QUAD;
                     for (int v = 0; v < VERTICES_PER_QUAD; v++)
                     {
                         vertices[insertionIndex + v].position = quadVertices[v] * new Vector3(fc.pxCoords.Z, fc.pxCoords.W, 1);
@@ -126,6 +129,7 @@ namespace BugSouls.Rendering
                         vertices[insertionIndex + v].color = new Vector4(color.R, color.G, color.B, color.A);                        
                     }
                     offset += (int)fc.advance;
+                    numOfChars++;
                 }
                 else
                 {
@@ -140,6 +144,7 @@ namespace BugSouls.Rendering
 
         public void Draw()
         {
+            GL.Enable(EnableCap.Blend);
             if (fontMap == null || numOfChars < 1)
                 return;
 
@@ -155,6 +160,7 @@ namespace BugSouls.Rendering
             GL.DisableVertexAttribArray(0);
             GL.DisableVertexAttribArray(1);
             GL.DisableVertexAttribArray(2);
+            GL.Disable(EnableCap.Blend);
         }
 
         public void Dispose()

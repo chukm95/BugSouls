@@ -2,6 +2,7 @@
 using BugSouls.ResourceManagement.Shaders;
 using BugSouls.ResourceManagement.Textures;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,8 @@ namespace BugSouls.GameObjects
 
         private Random random;
 
+        private Vector3 lastCursorPos;
+
         private bool hasChanged;
 
         //room in edit mode
@@ -56,11 +59,36 @@ namespace BugSouls.GameObjects
 
             random = new Random(SEED);
 
+            lastCursorPos = Vector3.Zero;
+
             hasChanged = true;
         }
 
-        public void Update()
+        public void Update(Vector3 cursorPos)
         {
+            if (!cursorPos.Equals(lastCursorPos))
+            {
+                lastCursorPos = cursorPos;
+                lastCursorPos.Y = 0.01f;
+                hasChanged = true;
+            }
+
+            if (lastCursorPos.X >= 0 && lastCursorPos.X < MAX_ROOM_SIZE && lastCursorPos.Y >= 0 && lastCursorPos.Y < MAX_ROOM_SIZE)
+            {
+                MouseState ms = Core.NativeWindow.MouseState;
+
+                if (ms.IsButtonDown(MouseButton.Button1) && !ms.WasButtonDown(MouseButton.Button1))
+                {
+                    map[(int)lastCursorPos.X, (int)lastCursorPos.Z] = 1;
+                    hasChanged = true;
+                }
+                else if(ms.IsButtonDown(MouseButton.Button2) && !ms.WasButtonDown(MouseButton.Button2))
+                {
+                    map[(int)lastCursorPos.X, (int)lastCursorPos.Z] = 0;
+                    hasChanged = true;
+                }                
+            }
+
             if (hasChanged)
             {
                 Random random = new Random(SEED);
@@ -71,10 +99,10 @@ namespace BugSouls.GameObjects
                     for (int x = 1; x < MAX_ROOM_SIZE - 1; x++)
                     {
                         CheckForFloorTile(x, y, random);
-                        CheckForWall(x, y, random);
-                        
+                        CheckForWall(x, y, random);                        
                     }
                 }
+                batcher.Batch(lastCursorPos * 32f, rotation_up, new Vector3(32, 32, 1), tileSheet[4], Color4.Red, 2);
                 batcher.End();
 
                 hasChanged = false;

@@ -28,6 +28,7 @@ namespace BugSouls.Rendering
 
         private Shader shader;
         private ShaderUniform su_projectionMatrix;
+        private ShaderUniform su_useLight;
         private ShaderUniform su_texture;
 
         public Renderer()
@@ -41,7 +42,7 @@ namespace BugSouls.Rendering
                 PixelFormat.Rgba,
                 PixelType.UnsignedByte);
 
-            gameDepthAttachment = new FrameBufferAttachment(FramebufferAttachment.Depth,
+            gameDepthAttachment = new FrameBufferAttachment(FramebufferAttachment.DepthAttachment,
                DrawBuffersEnum.None,
                PixelInternalFormat.DepthComponent32f,
                PixelFormat.DepthComponent,
@@ -55,7 +56,7 @@ namespace BugSouls.Rendering
                 PixelFormat.Rgba,
                 PixelType.UnsignedByte);
 
-            guiDepthAttachment = new FrameBufferAttachment(FramebufferAttachment.Depth,
+            guiDepthAttachment = new FrameBufferAttachment(FramebufferAttachment.DepthAttachment,
                DrawBuffersEnum.None,
                PixelInternalFormat.DepthComponent32f,
                PixelFormat.DepthComponent,
@@ -74,11 +75,15 @@ namespace BugSouls.Rendering
 
             shader = Core.ShaderManager.LoadShader("*/Assets/Shaders/BatchingShader.txt");
             su_projectionMatrix = shader["projectionMatrix"];
+            su_useLight = shader["useLight"];
             su_texture = shader["sampler"];
 
             GL.ClearColor(0, 0, 0, 1);
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Front);
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Lequal);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
         }
 
         private void Window_OnResize(int width, int height)
@@ -95,6 +100,7 @@ namespace BugSouls.Rendering
             GL.Viewport(0, 0, window.Width, window.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
             gameStateManager.CurrentGameState?.RenderGame(deltaTime);
+
             gameFrameBuffer.Unbind();
             //render the gui
             guiFrameBuffer.Bind();
@@ -112,6 +118,7 @@ namespace BugSouls.Rendering
 
             shader.Bind();
             su_projectionMatrix.Set(projMatrix);
+            su_useLight.Set(false);
             su_texture.Set(0);
 
             gameColorAttachment.Bind(0);
