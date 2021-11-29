@@ -38,7 +38,7 @@ namespace BugSouls.GamestateManagement.TestState
             }
             batcher.End();
 
-            testTexture = textureManager.LoadShader("*/Assets/Textures/Test.png");
+            testTexture = textureManager.LoadTexture("*/Assets/Textures/Test.png");
             testShader = shaderManager.LoadShader("*/Assets/Shaders/BatchImageTestShader.txt");
             projectionMatrix = testShader["projectionMatrix"];
             textureSampler = testShader["testTexture"];

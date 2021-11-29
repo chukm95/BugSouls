@@ -74,7 +74,8 @@ namespace BugSouls.ResourceManagement.Textures
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
-
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureLodBias, -0.4f);
                 Console.WriteLine($"Texture {path} loaded succesfully!");
 
                 return true;

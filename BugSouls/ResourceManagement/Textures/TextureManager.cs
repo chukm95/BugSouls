@@ -16,7 +16,7 @@ namespace BugSouls.ResourceManagement.Textures
             textureList = new Dictionary<string, Texture>();
         }
 
-        public Texture LoadShader(string path)
+        public Texture LoadTexture(string path)
         {
             if (path.Contains('*'))
             {

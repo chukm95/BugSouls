@@ -1,4 +1,5 @@
 ﻿using BugSouls.ResourceManagement.Shaders;
+using BugSouls.Util;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -174,6 +175,43 @@ namespace BugSouls.Rendering.Cameras
         {
             hasProjectionChanged = true;
         }
+
+        public void CastRay(ref Line line)
+        {
+            Vector4 tempPoints;
+
+            float mouseX = Core.NativeWindow.MouseState.X;
+            float mouseY = Core.NativeWindow.MouseState.Y;
+
+            int[] viewport = new int[4];
+            OpenTK.Graphics.OpenGL.GL.GetInteger(OpenTK.Graphics.OpenGL.GetPName.Viewport, viewport);
+
+            //ray near
+            tempPoints.X = (mouseX - (float)viewport[0]) / (float)viewport[2] * 2.0f - 1.0f;
+            tempPoints.Y = 1 - (mouseY - (float)viewport[1]) / (float)viewport[3] * 2.0f;
+            tempPoints.Z = -1.0f;
+            tempPoints.W = 1.0f;
+
+            tempPoints *= (Matrix4.Invert(projectionMatrix) * Matrix4.Invert(viewMatrix));
+            line.min = new Vector3(tempPoints.X, tempPoints.Y, tempPoints.Z) / tempPoints.W;
+
+            //ray far
+            tempPoints.X = (mouseX - (float)viewport[0]) / (float)viewport[2] * 2.0f - 1.0f;
+            tempPoints.Y = 1 - (mouseY - (float)viewport[1]) / (float)viewport[3] * 2.0f;
+            tempPoints.Z = 1;
+            tempPoints.W = 1.0f;
+
+            tempPoints *= (Matrix4.Invert(projectionMatrix) * Matrix4.Invert(viewMatrix));
+            line.max = new Vector3(tempPoints.X, tempPoints.Y, tempPoints.Z) / tempPoints.W;
+        }
+
+        //currently accounts from y 0 
+        public void CastRayCorrectedForPlane(ref Line line)
+        {
+            CastRay(ref line);
+            float a = line.min.Y - line.max.Y;
+            line.max = line.min + (line.max - line.min) * ((line.max.Y + a) / a);
+        }        
 
     }
 }

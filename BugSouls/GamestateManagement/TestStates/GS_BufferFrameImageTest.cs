@@ -33,7 +33,7 @@ namespace BugSouls.GamestateManagement.TestState
             batcher.Batch(new Vector3(60, 0, -1), new Vector3(0, 0, 0), new Vector3(32, 32, 1), ts[3], Color4.White, 0);
             batcher.End();
 
-            testTexture = textureManager.LoadShader("*/Assets/Textures/FrameTest.png");
+            testTexture = textureManager.LoadTexture("*/Assets/Textures/FrameTest.png");
             testShader = shaderManager.LoadShader("*/Assets/Shaders/BatchImageTestShader.txt");
             projectionMatrix = testShader["projectionMatrix"];
             textureSampler = testShader["testTexture"];

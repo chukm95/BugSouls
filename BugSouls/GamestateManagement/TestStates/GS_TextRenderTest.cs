@@ -28,7 +28,7 @@ namespace BugSouls.GamestateManagement.TestState
             textRenderer = new TextRenderer();
             textRenderer.BufferString(fm, "Test\ntest", new Vector2i(-600, 32), Color4.White);
 
-            testShader = shaderManager.LoadShader("*/Assets/Shaders/TextTestShader.txt");
+            testShader = shaderManager.LoadShader("*/Assets/Shaders/TextShader.txt");
             projectionMatrix = testShader["projectionMatrix"];
             textureSampler = testShader["testTexture"];
 

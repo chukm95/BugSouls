@@ -5,6 +5,7 @@ using BugSouls.ResourceManagement.Fonts;
 using BugSouls.ResourceManagement.Shaders;
 using BugSouls.ResourceManagement.Textures;
 using BugSouls.Util;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -34,6 +35,11 @@ namespace BugSouls
         {
             if (instance != null)
                 instance.isRunning = false;
+        }
+
+        public static NativeWindow NativeWindow
+        {
+            get => instance.nativeWindow;
         }
 
         public static Window Window
@@ -67,12 +73,12 @@ namespace BugSouls
         private bool isRunning;
 
         private Window window;
+        private Renderer renderer;
 
         private GameStateManager gameStateManager;
         private ShaderManager shaderManager;
         private TextureManager textureManager;
         private FontManager fontManager;
-        private TextRenderer textRenderer;
 
         private Core()
         {
@@ -89,17 +95,9 @@ namespace BugSouls
                 deltaTimer.Restart();
                 //process window events
                 nativeWindow.ProcessEvents();
-                //update the currentgamestate
-                gameStateManager.CurrentGameState?.Update(deltaTime);
-                //render the game
-                gameStateManager.CurrentGameState?.RenderGame(deltaTime);
-                //render the gui
-                gameStateManager.CurrentGameState?.RenderGui(deltaTime);
 
-                if(nativeWindow.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A))
-                    gameStateManager.SetGameState<GS_BufferFrameImageTest>();
-                else if (nativeWindow.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
-                    gameStateManager.SetGameState<GS_TextRenderTest>();
+                Update();
+                renderer.Render(deltaTime);
 
                 //swap frame buffers
                 nativeWindow.Context.SwapBuffers();
@@ -141,20 +139,23 @@ namespace BugSouls
             textureManager = new TextureManager();
             //create fontmanager
             fontManager = new FontManager();
-            
 
-            //add gamestates
-            gameStateManager.AddGameState<GS_TriangleTest>(new GS_TriangleTest());
-            gameStateManager.AddGameState<GS_BufferTest>(new GS_BufferTest());
-            gameStateManager.AddGameState<GS_BufferImageTest>(new GS_BufferImageTest());
-            gameStateManager.AddGameState<GS_BufferFrameImageTest>(new GS_BufferFrameImageTest());
-            gameStateManager.AddGameState<GS_TextRenderTest>(new GS_TextRenderTest());
-            gameStateManager.SetGameState<GS_BufferFrameImageTest>();
+            renderer = new Renderer();
 
+            gameStateManager.AddGameState<GS_LevelEditor>(new GS_LevelEditor());
+            gameStateManager.SetGameState<GS_LevelEditor>();
 
             //final init is telling the game loop we are running
             isRunning = true;
         }
+
+
+        private void Update()
+        {
+            //update the currentgamestate
+            gameStateManager.CurrentGameState?.Update(deltaTime);           
+        }
+
 
         private void Deinitialize()
         {
@@ -164,6 +165,10 @@ namespace BugSouls
             shaderManager.CleanUp();
             //clean up textures
             textureManager.CleanUp();
+            //clean up fontmaps
+            fontManager.CleanUp();
+            //clear framebuffers
+            renderer.CleanUp();
             //exit game
             Environment.Exit(0);
         }

@@ -282,9 +282,9 @@ namespace BugSouls.Rendering
                 for (int i = 0; i < templatePositions.Length; i++)
                 {
                     vertices[insertionIndex + i].position = Vector3.Transform(templatePositions[i] * scale, rotationQuat) + position;
-                    vertices[insertionIndex + i].normal = templateNormals[i];
+                    vertices[insertionIndex + i].normal = Vector3.Transform(templateNormals[i], rotationQuat);
                     vertices[insertionIndex + i].uv = uv.Xy + (templateUvs[i] * uv.Zw);
-                    vertices[insertionIndex + i].color = new Vector4(color.R, color.G, color.B, color.A) / 255f;
+                    vertices[insertionIndex + i].color = new Vector4(color.R, color.G, color.B, color.A);
                     vertices[insertionIndex + i].texChannel = texChannel;
                 }
                 elementCount++;
