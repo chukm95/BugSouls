@@ -19,7 +19,7 @@ namespace BugSouls.Rendering.Cameras
         private readonly float RotationInRadians = MathHelper.DegreesToRadians(90);
         private readonly float FullRotationRad = MathHelper.DegreesToRadians(360);
 
-        private enum RotationDirection
+        public enum RotationDirection
         {
             NONE,
             LEFT,
@@ -34,6 +34,21 @@ namespace BugSouls.Rendering.Cameras
                 position_lookAt = value;
                 hasViewChanged = true;
             }
+        }
+
+        public float Angle
+        {
+            get => angle;
+        }
+
+        public float AngleRad
+        {
+            get => MathHelper.DegreesToRadians(angle);
+        }
+
+        public RotationDirection RotationDir
+        {
+            get => rotationDirection;
         }
 
         public Matrix4 View
@@ -70,8 +85,8 @@ namespace BugSouls.Rendering.Cameras
 
         public DefaultCamera()
         {
-            position_lookAt = new Vector3(16f, 0, 16f) * 32f;
-            position_camera = new Vector3(0f, 1.75f, 1.3f) * 32f;
+            position_lookAt = Vector3.Zero;
+            position_camera = new Vector3(0f, 4f, 4f) * 32f;
 
             window = Core.Window;
             window.OnResize += Window_OnResize;
@@ -90,6 +105,15 @@ namespace BugSouls.Rendering.Cameras
             hasProjectionChanged = true;
         }
 
+        public void Turn(RotationDirection rotationDirection)
+        {
+            if (this.rotationDirection == RotationDirection.NONE)
+            {
+                this.rotationDirection = rotationDirection;
+                angleTransition = 0;
+            }
+        }
+
         public void Update(TimeSpan deltaTime)
         {
             if (angle >= 360f)
@@ -97,25 +121,12 @@ namespace BugSouls.Rendering.Cameras
             else if (angle < 0f)
                 angle += 360f;
 
-            if (rotationDirection == RotationDirection.NONE)
-            {
-                if (Core.NativeWindow.KeyboardState.IsKeyDown(Keys.Left))
-                {
-                    rotationDirection = RotationDirection.LEFT;
-                    angleTransition = 0;
-                }
-                else if (Core.NativeWindow.KeyboardState.IsKeyDown(Keys.Right))
-                {
-                    rotationDirection = RotationDirection.RIGHT;
-                    angleTransition = 0;
-                }                
-            }
-            else
+            if (rotationDirection != RotationDirection.NONE)           
             {
                 if(rotationDirection == RotationDirection.LEFT)
-                    angleTransition -= (float)deltaTime.TotalSeconds * 90f;
+                    angleTransition -= (float)deltaTime.TotalSeconds * 270f;
                 else
-                    angleTransition += (float)deltaTime.TotalSeconds * 90f;
+                    angleTransition += (float)deltaTime.TotalSeconds * 270f;
                 if (Math.Abs(angleTransition) >= 90f)
                 {
                     if (rotationDirection == RotationDirection.LEFT)
@@ -141,8 +152,8 @@ namespace BugSouls.Rendering.Cameras
 
                 if (hasProjectionChanged)
                 {
-                    //projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(FOV, window.AspectRatio, zNear, zFar);
-                    projectionMatrix = Matrix4.CreateOrthographic(320, 180, zNear, zFar);
+                    //projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(FOV, window.AspectRatio, 0.1f, zFar);
+                    projectionMatrix = Matrix4.CreateOrthographic(640, 360, zNear, zFar);
                     hasProjectionChanged = false;
                 }
                 if (hasViewChanged)

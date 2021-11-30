@@ -1,4 +1,5 @@
-﻿using BugSouls.Rendering;
+﻿using BugSouls.GamestateManagement;
+using BugSouls.Rendering;
 using BugSouls.ResourceManagement.Shaders;
 using BugSouls.ResourceManagement.Textures;
 using OpenTK.Mathematics;
@@ -13,7 +14,7 @@ namespace BugSouls.GameObjects
 {
     internal class Room
     {
-        private const int MAX_ROOM_SIZE = 33;
+        public const int MAX_ROOM_SIZE = 65;
         private const int SEED = 23417;
 
         private Vector3 rotation_up = new Vector3(MathHelper.DegreesToRadians(-90), 0, 0);
@@ -44,14 +45,7 @@ namespace BugSouls.GameObjects
             map = new byte[MAX_ROOM_SIZE, MAX_ROOM_SIZE];
 
 
-            //default start
-            for (int y = 15; y < MAX_ROOM_SIZE - 15; y++)
-            {
-                for (int x = 15; x < MAX_ROOM_SIZE - 15; x++)
-                {
-                    map[x, y] = 1;
-                }
-            }
+            map[33, 33] = 1;
 
             tileSheet = new TileSheet(8, 8);
 
@@ -64,49 +58,43 @@ namespace BugSouls.GameObjects
             hasChanged = true;
         }
 
-        public void Update(Vector3 cursorPos)
+        public void Edit(EditMode editMode, int x, int y)
         {
-            if (!cursorPos.Equals(lastCursorPos))
+            if(x >= 0 && x < MAX_ROOM_SIZE && y >= 0 && y < MAX_ROOM_SIZE)
             {
-                lastCursorPos = cursorPos;
-                lastCursorPos.Y = 0.01f;
-                hasChanged = true;
-            }
-
-            if (lastCursorPos.X >= 0 && lastCursorPos.X < MAX_ROOM_SIZE && lastCursorPos.Y >= 0 && lastCursorPos.Y < MAX_ROOM_SIZE)
-            {
-                MouseState ms = Core.NativeWindow.MouseState;
-
-                if (ms.IsButtonDown(MouseButton.Button1) && !ms.WasButtonDown(MouseButton.Button1))
+                switch(editMode)
                 {
-                    map[(int)lastCursorPos.X, (int)lastCursorPos.Z] = 1;
-                    hasChanged = true;
+                    case EditMode.TILE_REMOVER:
+                        map[x, y] = 0;
+                        break;
+                    case EditMode.TILE_PLACER:
+                        map[x, y] = 1;
+                        break;
+                    case EditMode.TILE_WATER:
+                        map[x, y] = 1;
+                        break;
                 }
-                else if(ms.IsButtonDown(MouseButton.Button2) && !ms.WasButtonDown(MouseButton.Button2))
-                {
-                    map[(int)lastCursorPos.X, (int)lastCursorPos.Z] = 0;
-                    hasChanged = true;
-                }                
             }
+        }
 
-            if (hasChanged)
+        public void Update()
+        {
+            Random random = new Random(SEED);
+
+            batcher.Begin();
+            for (int y = 1; y < MAX_ROOM_SIZE - 1; y++)
             {
-                Random random = new Random(SEED);
-
-                batcher.Begin();
-                for (int y = 1; y < MAX_ROOM_SIZE - 1; y++)
+                for (int x = 1; x < MAX_ROOM_SIZE - 1; x++)
                 {
-                    for (int x = 1; x < MAX_ROOM_SIZE - 1; x++)
-                    {
-                        CheckForFloorTile(x, y, random);
-                        CheckForWall(x, y, random);                        
-                    }
+                    //draw floor
+                    batcher.Batch(new Vector3(x * 32, -1, y * 32), rotation_up, new Vector3(32, 32, 1), tileSheet[7], Color4.White, 0);
+                    CheckForFloorTile(x, y, random);
+                    CheckForWall(x, y, random);
                 }
-                batcher.Batch(lastCursorPos * 32f, rotation_up, new Vector3(32, 32, 1), tileSheet[4], Color4.Red, 2);
-                batcher.End();
-
-                hasChanged = false;
             }
+            batcher.End();
+
+            hasChanged = false;
         }
 
         private void CheckForFloorTile(int x, int y, Random random)
@@ -126,22 +114,22 @@ namespace BugSouls.GameObjects
                 if (map[x - 1, y] == 1)
                 {
                     //wall to left
-                    batcher.Batch(new Vector3((x * 32) - 16, 16, y * 32), rotation_west, new Vector3(32, 32, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
+                    batcher.Batch(new Vector3((x * 32) - 16, 24, y * 32), rotation_west, new Vector3(32, 48, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
                 }
                 if (map[x + 1, y] == 1)
                 {
                     //wall to right
-                    batcher.Batch(new Vector3((x * 32) + 16, 16, y * 32), rotation_east, new Vector3(32, 32, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
+                    batcher.Batch(new Vector3((x * 32) + 16, 24, y * 32), rotation_east, new Vector3(32, 48, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
                 }
                 if (map[x, y - 1] == 1)
                 {
                     //wall to forward
-                    batcher.Batch(new Vector3(x * 32, 16, (y * 32) -16), rotation_north, new Vector3(32, 32, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
+                    batcher.Batch(new Vector3(x * 32, 24, (y * 32) -16), rotation_north, new Vector3(32, 48, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
                 }
                 if (map[x, y + 1] == 1)
                 {
                     //wall above
-                    batcher.Batch(new Vector3(x * 32, 16, (y * 32)+16), rotation_south, new Vector3(32, 32, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
+                    batcher.Batch(new Vector3(x * 32, 24, (y * 32)+16), rotation_south, new Vector3(32, 48, 1), tileSheet[random.Next(0, 3)], Color4.White, 0);
                 }
             }
         }

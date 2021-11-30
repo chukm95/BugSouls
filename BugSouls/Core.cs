@@ -143,9 +143,8 @@ namespace BugSouls
 
             renderer = new Renderer();
 
-            gameStateManager.AddGameState<GS_TextRenderTest>(new GS_TextRenderTest());
             gameStateManager.AddGameState<GS_LevelEditor>(new GS_LevelEditor());
-            gameStateManager.SetGameState<GS_TextRenderTest>();
+            gameStateManager.SetGameState<GS_LevelEditor>();
 
             //final init is telling the game loop we are running
             isRunning = true;

@@ -144,7 +144,7 @@ namespace BugSouls.Rendering
 
         public void Draw()
         {
-            GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.Blend);
             if (fontMap == null || numOfChars < 1)
                 return;
 
@@ -160,7 +160,7 @@ namespace BugSouls.Rendering
             GL.DisableVertexAttribArray(0);
             GL.DisableVertexAttribArray(1);
             GL.DisableVertexAttribArray(2);
-            GL.Disable(EnableCap.Blend);
+            //GL.Disable(EnableCap.Blend);
         }
 
         public void Dispose()

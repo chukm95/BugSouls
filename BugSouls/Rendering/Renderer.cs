@@ -100,14 +100,19 @@ namespace BugSouls.Rendering
             GL.Viewport(0, 0, window.Width, window.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
             gameStateManager.CurrentGameState?.RenderGame(deltaTime);
-
             gameFrameBuffer.Unbind();
+
             //render the gui
-            guiFrameBuffer.Bind();
-            GL.ClearColor(0f, 0f, 0f, 1f);
+            GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            guiFrameBuffer.Bind();            
+            GL.ClearColor(0f, 0f, 0f, 0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
             GL.Viewport(0, 0, window.Width, window.Height);
             gameStateManager.CurrentGameState?.RenderGui(deltaTime);
             guiFrameBuffer.Unbind();
+            GL.Disable(EnableCap.Blend);
+            GL.Enable(EnableCap.DepthTest);
 
             //do post processing
 
@@ -121,8 +126,13 @@ namespace BugSouls.Rendering
             su_useLight.Set(false);
             su_texture.Set(0);
 
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             gameColorAttachment.Bind(0);
             batcher.Draw();
+            guiColorAttachment.Bind(0);
+            batcher.Draw();
+            GL.Disable(EnableCap.Blend);
         }
 
         public void CleanUp()
